@@ -11,18 +11,18 @@ logger = logging.getLogger(__name__)
 
 class Item:
     """Tracks items using the mass and density as a \"canonical\" amount"""
-    def __init__(self, name: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, **kwargs):
+    def __init__(self, name: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, **kwargs) -> Item:
         self.name = name
         self.details = kwargs
         
         # Mass defined
         if mass:
-            self._mass = mass
+            self._mass = mass.to("g")
             if volume: # mass and volume
                 # self._volume = volume
                 self._density: Quantity = Quantity(mass / volume) # Stupid type checking thing
             elif density: # mass and density
-                self._density = density
+                self._density = density.to("g/mL")
                 # self._volume: Quantity = Quantity(mass * density) # Stupid type checking thing
             else: # mass
                 logger.info(f"Setting density of \"{self.name}\" to 1 g/mL automatically")
@@ -31,9 +31,10 @@ class Item:
 
         # Mass defined
         elif volume:
+            volume = volume.to("mL")
             # self._volume = volume
             if density: # volume and density
-                self._density = density
+                self._density = density.to("g/mL")
                 self._mass: Quantity = Quantity(volume * density) # Stupid type checking thing
             else: # volume
                 logger.info(f"Setting density of \"{self.name}\" to 1 g/mL automatically")
@@ -77,7 +78,7 @@ class Item:
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
-    def __init__(self, name: str, quantity: int, **kwargs):
+    def __init__(self, name: str, quantity: int, **kwargs) -> CountableItem:
         self.name = name
         self.details = kwargs
         self.quantity = quantity

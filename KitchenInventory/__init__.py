@@ -4,6 +4,7 @@
 import pint
 
 from .Items import Item, CountableItem 
-__all__ = ["Item", "CountableItem"]
+from .Inventory import Inventory
+__all__ = ["Item", "CountableItem", "Inventory"]
 
 unit = pint.UnitRegistry()
