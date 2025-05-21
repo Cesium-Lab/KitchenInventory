@@ -1,3 +1,7 @@
+# Don't push inventories or logs
+inventories/
+logs/
+
 # MAC FOLDER THING
 **.DS_Store
 
