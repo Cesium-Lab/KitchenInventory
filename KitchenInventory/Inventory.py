@@ -54,7 +54,7 @@ class Inventory:
         if filename is None:
             filename = f"./inventories/{self.name}.csv"
         
-        with open(filename, 'w') as f:
+        with open(filename, 'x') as f:
             f.write(self.foods.to_csv(index=False))
 
 
