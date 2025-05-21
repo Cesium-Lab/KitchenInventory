@@ -1,16 +1,16 @@
-# import pint
 from __future__ import annotations
-
-from pint import Quantity
 import logging
-logger = logging.getLogger(__name__)
+# from .logger_config import setup_logger
+from pint import Quantity
 # from .Locations.the_pit import Location
 
 # https://en.wikipedia.org/wiki/Centimetre%E2%80%93gram%E2%80%93second_system_of_units
 # g, mL 
 
+logger = logging.getLogger(__name__)
+
 class Item:
-    """Tracks items using the mass as a \"canonical\" amount"""
+    """Tracks items using the mass and density as a \"canonical\" amount"""
     def __init__(self, name: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, **kwargs):
         self.name = name
         self.details = kwargs
@@ -25,7 +25,7 @@ class Item:
                 self._density = density
                 # self._volume: Quantity = Quantity(mass * density) # Stupid type checking thing
             else: # mass
-                logger.info(f"Setting density of {self.name} to 1 g/mL automatically")
+                logger.info(f"Setting density of \"{self.name}\" to 1 g/mL automatically")
                 self._density = Quantity(1, "g/mL")
                 # self._volume: Quantity = Quantity(mass * density) # Stupid type checking thing
 
@@ -36,7 +36,7 @@ class Item:
                 self._density = density
                 self._mass: Quantity = Quantity(volume * density) # Stupid type checking thing
             else: # volume
-                logger.info(f"Setting density of {self.name} to 1 g/mL automatically")
+                logger.info(f"Setting density of \"{self.name}\" to 1 g/mL automatically")
                 self._density = Quantity(1, "g/mL")
                 self._mass: Quantity = Quantity(volume * self._density) # Stupid type checking thing
                 # self._volume: Quantity = Quantity(mass * density) # Stupid type checking thing
@@ -65,6 +65,15 @@ class Item:
     @volume.setter
     def volume(self, new_vol: Quantity):
         self._mass = (new_vol * self._density)
+
+    # Density 
+    @property
+    def density(self):
+        return self._density
+    
+    @density.setter
+    def density(self, _):
+        raise NotImplementedError("Should not be resetting density after initialization")
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
