@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class Inventory:
 
-    columns = ["Name", "mass (g)", "volume (mL)", "density (g/mL)", "amount"]
+    columns = ["Name", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount"]
 
     def __init__(self, name: str):
         self.name = name
@@ -19,18 +19,18 @@ class Inventory:
     def add_item(self, item: Item | CountableItem):
         row = {key:"" for key in Inventory.columns}
         row["Name"] = [item.name]
-        row["amount"] = 0
+        row["Amount"] = 0
 
         def s(qty):
             return str(qty).strip(" dimensionless")
 
         if isinstance(item, Item):
-            row["mass (g)"] = [s(item.mass / Quantity(1, "g"))]
-            row["volume (mL)"] = [s(item.volume / Quantity(1, "mL"))]
-            row["density (g/mL)"] = [s(item.density / Quantity(1, "g/mL"))]
+            row["Mass (g)"] = [s(item.mass / Quantity(1, "g"))]
+            row["Volume (mL)"] = [s(item.volume / Quantity(1, "mL"))]
+            row["Density (g/mL)"] = [s(item.density / Quantity(1, "g/mL"))]
 
         if isinstance(item, CountableItem):
-            row["amount"] = [s(item.quantity)]
+            row["Amount"] = [s(item.quantity)]
 
         if item.details:
             row["Expiration"] = [item.details["Expiration"]]
@@ -41,11 +41,33 @@ class Inventory:
 
         # Logging
         stripped_row = {k: v for k, v in row.items() if v}
-        logger.info(f"Added {stripped_row} to {self.name}")
+        logger.info(f"Added to {self.name}: {stripped_row}")
 
     def add_items(self, items: list[Item | CountableItem]):
         for item in items:
             self.add_item(item)
+    
+    @staticmethod
+    def row_to_item(row: pd.Series):
+        if row["Mass (g)"]  == "" and row["Volume (mL)"] == "":
+            return CountableItem(
+                row["Name"],
+                row["Amount"]
+            )
+        
+        return Item(
+            row["Name"],
+            mass = Quantity(float(row["Mass (g)"]), 'g'),
+            density = Quantity(float(row["Density (g/mL)"]), 'g/mL')
+        )
+
+    def get_food_rows(self, name: str):
+        rows = self.foods[self.foods['Name'] == name]
+        return rows
+    
+    def get_foods(self, name: str) -> list[Item | CountableItem]:
+        rows = self.get_food_rows(name)
+        return [Inventory.row_to_item(row) for _,row in rows.iterrows()]
 
     def reset(self):
         self.foods = self.foods[0:0]
@@ -54,7 +76,7 @@ class Inventory:
         if filename is None:
             filename = f"./inventories/{self.name}.csv"
         
-        with open(filename, 'x') as f:
+        with open(filename, 'w') as f:
             f.write(self.foods.to_csv(index=False))
 
 

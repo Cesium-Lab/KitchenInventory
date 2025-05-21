@@ -23,7 +23,11 @@ if __name__ == "__main__":
 
     inventory_b = kit.Inventory.load(f"{sys.path[0]}/The Pit.csv", "The PIT B")
 
-    print(inventory_b.foods)
+    egg_rows = inventory_b.get_foods("egg.")
+    milk_rows = inventory_b.get_foods("Milk")
+    
+    for row in egg_rows + milk_rows:
+        print(row)
 
   
 

@@ -46,7 +46,7 @@ class Item:
             raise ValueError("If density is provided, must provide mass or volume")
         
     def __str__(self):
-        return f"[{self.name}: ({self.mass}, {self.volume}, {self._density})]"
+        return f"[\"{self.name}\": ({self.mass}, {self.volume}, {self._density})]"
 
 
     # Mass 
@@ -84,4 +84,4 @@ class CountableItem:
         self.quantity = quantity
 
     def __str__(self):
-        return f"[{self.name}: {self.quantity} count]"
+        return f"[\"{self.name}\": {self.quantity} count]"
