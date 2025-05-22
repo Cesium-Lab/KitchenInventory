@@ -2,14 +2,14 @@ from __future__ import annotations
 import pandas as pd
 from pint import Quantity
 from .Items import Item, CountableItem
-
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Inventory:
 
-    columns = ["Name", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount"]
+    columns = ["Name", "Food Type", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount", "Expiration"]
+    details_columns = ["Brand"]
 
     def __init__(self, name: str):
         self.name = name
@@ -17,9 +17,11 @@ class Inventory:
 
 
     def add_item(self, item: Item | CountableItem):
-        row = {key:"" for key in Inventory.columns}
+        row = {key:"" for key in Inventory.columns + Inventory.details_columns}
         row["Name"] = [item.name]
-        row["Amount"] = 0
+        row["Food Type"] = item.food_type
+        row["Amount"] = 1
+        row["Expiration"] = item.expiration.strftime("%Y-%m-%d") if item.expiration else ""
 
         def s(qty):
             return str(qty).strip(" dimensionless")
@@ -33,7 +35,9 @@ class Inventory:
             row["Amount"] = [s(item.quantity)]
 
         if item.details:
-            row["Expiration"] = [item.details["Expiration"]]
+            for column in Inventory.details_columns:
+                if val := item.details.get(column.lower()):
+                    row[column] = val
 
         row_df = pd.DataFrame.from_dict(row)
 
@@ -49,16 +53,21 @@ class Inventory:
     
     @staticmethod
     def row_to_item(row: pd.Series):
+        expiration = None if row.get("Expiration") == "" else row["Expiration"]
         if row["Mass (g)"]  == "" and row["Volume (mL)"] == "":
             return CountableItem(
-                row["Name"],
-                row["Amount"]
+                name = row["Name"],
+                food_type = row["Food Type"],
+                quantity = row["Amount"],
+                expiration = expiration
             )
         
         return Item(
-            row["Name"],
+            name = row["Name"],
+            food_type = row["Food Type"],
             mass = Quantity(float(row["Mass (g)"]), 'g'),
-            density = Quantity(float(row["Density (g/mL)"]), 'g/mL')
+            density = Quantity(float(row["Density (g/mL)"]), 'g/mL'),
+            expiration = expiration
         )
 
     def get_food_rows(self, name: str):

@@ -2,6 +2,8 @@ from __future__ import annotations
 import logging
 # from .logger_config import setup_logger
 from pint import Quantity
+from .foods import foods
+from datetime import datetime
 # from .Locations.the_pit import Location
 
 # https://en.wikipedia.org/wiki/Centimetre%E2%80%93gram%E2%80%93second_system_of_units
@@ -11,10 +13,15 @@ logger = logging.getLogger(__name__)
 
 class Item:
     """Tracks items using the mass and density as a \"canonical\" amount"""
-    def __init__(self, name: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, **kwargs) -> Item:
+    def __init__(self, name: str, food_type: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, expiration: str = None, **kwargs) -> Item:
         self.name = name
+        self.expiration = datetime.strptime(expiration, "%Y-%m-%d") if expiration else datetime.max
         self.details = kwargs
         
+        if food_type not in foods():
+            raise ValueError(f"Food type '{food_type}' must be in foods list")
+        
+        self.food_type = food_type
         # Mass defined
         if mass:
             self._mass = mass.to("g")
@@ -46,7 +53,7 @@ class Item:
             raise ValueError("If density is provided, must provide mass or volume")
         
     def __str__(self):
-        return f"[\"{self.name}\": ({self.mass}, {self.volume}, {self._density})]"
+        return f"[\"{self.name}\" - {self.food_type}: ({self.mass}, {self.volume}, {self._density})]"
 
 
     # Mass 
@@ -78,10 +85,13 @@ class Item:
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
-    def __init__(self, name: str, quantity: int, **kwargs) -> CountableItem:
+    def __init__(self, name: str, food_type: str, quantity: int, expiration: str = None, **kwargs) -> CountableItem:
         self.name = name
+        self.expiration = datetime.strptime(expiration, "%Y-%m-%d") if expiration else None
+        self.food_type = food_type
         self.details = kwargs
         self.quantity = quantity
 
     def __str__(self):
-        return f"[\"{self.name}\": {self.quantity} count]"
+        return f"[\"{self.name}\" - {self.food_type}: {self.quantity} count]"
+    
