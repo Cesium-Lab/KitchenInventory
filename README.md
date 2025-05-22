@@ -12,7 +12,7 @@ Two types of backends available. These will both use the same interface, but som
 - Better searching functionality
 - Stored in a large table
 
-# Backend API Requirements
+# Backend Requirements
 - General
   - Uses pint library for quantities
 - Objects
@@ -21,13 +21,15 @@ Two types of backends available. These will both use the same interface, but som
     - Description
     - Vendor
     - Price
-  - MassItem
-    - Amount driven by mass
+  - Item
+    - Amount driven by mass or volume
+    - "Canonical" amount is mass, with density as conversion
     - Default density ($\rho$) conversion is $1\ g/cm^3$
-  - VolumeItem
-    - Amount driven by volume (e.g. milk)
-  - QuantityItem
+  - CountableItem
     - Amount driven by quantity (e.g. eggs)
+  - Inventory
+    - Stores items in database or table
+    - Can add by strings
   - Recipe
     - List of items required and amounts
     - Informs user of missing items, and how much to get
@@ -36,7 +38,7 @@ Two types of backends available. These will both use the same interface, but som
     - Which kitchen tools I have
     - Details - when I got them (for when to get new ones?)
     - Condition
-- Backend
+- API
   - Search 
     - Can search by expiration date
     - Can search by item type
