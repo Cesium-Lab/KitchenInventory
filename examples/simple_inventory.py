@@ -33,17 +33,26 @@ if __name__ == "__main__":
     inventory.add_items(items)
     
 
+    # Save and load into second inventory
     inventory.save(f"{sys.path[0]}/The Pit.csv")
-
     inventory_b = kit.Inventory.load(f"{sys.path[0]}/The Pit.csv", "The PIT B")
 
-    print(inventory_b.foods)
+    inventory_b.add_items(items)
 
-    egg_rows = inventory_b.get_foods("egg.")
-    milk_rows = inventory_b.get_foods("Milk")
+    # Save and load into third inventory
+    inventory_b.save(f"{sys.path[0]}/The Pit.csv")
+    inventory_c = kit.Inventory.load(f"{sys.path[0]}/The Pit.csv", "The PIT B")
+
+    print(inventory_c.foods)
+
+    egg_rows = inventory_c.foods_by_name("egg.")
+    milk_rows = inventory_c.foods_by_name("Milk")
     
+    # Print all "egg." and "Milk" rows
     for row in egg_rows + milk_rows:
         print(row)
+
+        
 
   
 

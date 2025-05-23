@@ -14,6 +14,7 @@ class Inventory:
     def __init__(self, name: str):
         self.name = name
         self.foods = pd.DataFrame(columns=Inventory.columns)
+        self.food_objs = []
 
 
     def add_item(self, item: Item | CountableItem):
@@ -54,28 +55,33 @@ class Inventory:
     @staticmethod
     def row_to_item(row: pd.Series):
         expiration = None if row.get("Expiration") == "" else row["Expiration"]
-        if row["Mass (g)"]  == "" and row["Volume (mL)"] == "":
-            return CountableItem(
+
+        if row["Mass (g)"] and row["Volume (mL)"]:
+            return Item(
+                name = row["Name"],
+                food_type = row["Food Type"],
+                mass = Quantity(float(row["Mass (g)"]), 'g'),
+                density = Quantity(float(row["Density (g/mL)"]), 'g/mL'),
+                expiration = expiration
+            )
+        
+        return CountableItem(
                 name = row["Name"],
                 food_type = row["Food Type"],
                 quantity = row["Amount"],
                 expiration = expiration
             )
-        
-        return Item(
-            name = row["Name"],
-            food_type = row["Food Type"],
-            mass = Quantity(float(row["Mass (g)"]), 'g'),
-            density = Quantity(float(row["Density (g/mL)"]), 'g/mL'),
-            expiration = expiration
-        )
 
-    def get_food_rows(self, name: str):
-        rows = self.foods[self.foods['Name'] == name]
-        return rows
+    # def get_food_rows(self, name: str):
+    #     rows = self.foods[self.foods['Name'] == name]
+    #     return rows
     
-    def get_foods(self, name: str) -> list[Item | CountableItem]:
-        rows = self.get_food_rows(name)
+    def foods_by_name(self, name: str) -> list[Item | CountableItem]:
+        rows = self.foods[self.foods["Name"] == name]
+        return [Inventory.row_to_item(row) for _,row in rows.iterrows()]
+    
+    def foods_by_type(self, food_type: str) -> list[Item | CountableItem]:
+        rows = self.foods[self.foods["Food Type"].str.contains(food_type)]
         return [Inventory.row_to_item(row) for _,row in rows.iterrows()]
 
     def reset(self):
@@ -87,7 +93,7 @@ class Inventory:
         
         with open(filename, 'w') as f:
             f.write(self.foods.to_csv(index=False))
-
+        logger.info(f"Saved {len(self.foods)} foods into '{filename}': {self}")
 
     @classmethod
     def load(self, filename: str, name: str = None) -> Inventory:
@@ -96,6 +102,10 @@ class Inventory:
         inv = Inventory(name)
         with open(filename, 'r') as f:
             inv.foods = pd.read_csv(f).fillna('')
+            inv.food_objs = [Inventory.row_to_item(row) for _,row in inv.foods.iterrows()]
+
+        logger.info(f"Loaded {len(inv.foods)} foods from '{filename}' into '{inv.name}': {inv}")
+
 
         return inv
 

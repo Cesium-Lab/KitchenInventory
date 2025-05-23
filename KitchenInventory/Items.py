@@ -3,7 +3,8 @@ import logging
 # from .logger_config import setup_logger
 from pint import Quantity
 from .foods import foods
-from datetime import datetime
+from datetime import datetime, timedelta
+import numpy as np
 # from .Locations.the_pit import Location
 
 # https://en.wikipedia.org/wiki/Centimetre%E2%80%93gram%E2%80%93second_system_of_units
@@ -15,7 +16,7 @@ class Item:
     """Tracks items using the mass and density as a \"canonical\" amount"""
     def __init__(self, name: str, food_type: str, *, mass: Quantity = None, volume: Quantity = None, density: Quantity = None, expiration: str = None, **kwargs) -> Item:
         self.name = name
-        self.expiration = datetime.strptime(expiration, "%Y-%m-%d") if expiration else datetime.max
+        self.expiration = datetime.strptime(expiration, "%Y-%m-%d") if expiration else None
         self.details = kwargs
         
         if food_type not in foods():
@@ -24,6 +25,7 @@ class Item:
         self.food_type = food_type
         # Mass defined
         if mass:
+
             self._mass = mass.to("g")
             if volume: # mass and volume
                 # self._volume = volume
@@ -82,6 +84,13 @@ class Item:
     @density.setter
     def density(self, _):
         raise NotImplementedError("Should not be resetting density after initialization")
+    
+    @property
+    def days_left(self) -> int | None:
+        if self.expiration is None:
+            return np.inf
+        diff: timedelta = self.expiration - datetime.today()
+        return diff.days
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
@@ -94,4 +103,11 @@ class CountableItem:
 
     def __str__(self):
         return f"[\"{self.name}\" - {self.food_type}: {self.quantity} count]"
+    
+    @property
+    def days_left(self) -> int | None:
+        if self.expiration is None:
+            return np.inf
+        diff: timedelta = self.expiration - datetime.today()
+        return diff.days
     
