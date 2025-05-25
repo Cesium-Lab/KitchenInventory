@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 # from .logger_config import setup_logger
 from pint import Quantity
-from .foods import foods
+from .category_database import foods
 from datetime import datetime, timedelta
 import numpy as np
 # from .Locations.the_pit import Location
@@ -116,7 +116,7 @@ class Item:
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
-    def __init__(self, name: str, food_type: str, quantity: int, expiration: str = None, **kwargs) -> CountableItem:
+    def __init__(self, name: str, food_type: str, quantity: int | float, expiration: str = None, **kwargs) -> CountableItem:
         self.name = name
         self.expiration = datetime.strptime(expiration, "%Y-%m-%d") if expiration else None
         if self.days_left < 0:
@@ -126,9 +126,8 @@ class CountableItem:
             raise ValueError(f"Food type '{food_type}' must be in foods list")
         self.food_type = food_type
         
-        if type(quantity) is not int or quantity < 0:
-            raise ValueError(f"Quantity must be int and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'")
-        
+        if (type(quantity) is not int and type(quantity) is not float) or quantity < 0:
+            raise ValueError(f"Quantity must be int or float, and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'")
 
         self.quantity = quantity
 
@@ -144,3 +143,8 @@ class CountableItem:
         diff: timedelta = self.expiration.date() - datetime.today().date()
         return diff.days
     
+class KitchenTools:
+
+    def __init__(self, name: str, tool_type: str):
+        self.name = name
+        self.tool_type = tool_type

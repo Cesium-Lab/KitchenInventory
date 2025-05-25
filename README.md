@@ -15,6 +15,7 @@ Two types of backends available. These will both use the same interface, but som
 # Backend Requirements
 - General
   - Uses pint library for quantities
+  - Input validation that throws error with relevant message
 - Objects
   - Details
     - Expiration (probably most important)
@@ -29,7 +30,7 @@ Two types of backends available. These will both use the same interface, but som
     - Amount driven by quantity (e.g. eggs)
   - Inventory
     - Stores items in database or table
-    - Can add by strings
+    - Can add by functions
   - Recipe
     - List of items required and amounts
     - Informs user of missing items, and how much to get

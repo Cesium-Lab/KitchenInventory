@@ -1,0 +1,7 @@
+Name,Food Type,Mass (g),Volume (mL),Density (g/mL),Amount,Expiration,Brand
+Heavy milk,/dairy/milk,2267.9618500000006,453.5923700000002,5.0,1,2025-05-30,Heavy milk Corporation
+Milk,/dairy/milk,5000.000000000001,5000.000000000001,1.0,1,2025-05-30,
+egg.,/dairy/egg,,,,12,,Eggs-R-Us
+Heavy milk,/dairy/milk,2267.9618500000006,453.59237000000013,5.0,1,2025-05-30,Heavy milk Corporation
+Milk,/dairy/milk,5000.000000000001,5000.000000000001,1.0,1,2025-05-30,
+egg.,/dairy/egg,,,,12,,Eggs-R-Us

@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+
+########################################################################
+#                                  Food                                #
+########################################################################
+
 class Food:
 
     class Dairy:
@@ -44,9 +49,9 @@ class Food:
         BASE = "/fruit"
         BERRY = "/fruit/berry"
         RASPBERRY = "/fruit/berry/raspberry"
-        BLUEBERRY = "/fruit/berry/raspberry"
-        BLACKBERRY = "/fruit/berry/raspberry"
-        STRAWBERRY = "/fruit/berry/raspberry"
+        BLUEBERRY = "/fruit/berry/blueberry"
+        BLACKBERRY = "/fruit/berry/blackberry"
+        STRAWBERRY = "/fruit/berry/strawberry"
         CHERRY = "/fruit/berry/cherry"
         BANANA = "/fruit/banana"
         APPLE = "/fruit/apple"
@@ -166,3 +171,46 @@ liquids = {
     "/dairy/yogurt",
     "/sauce"
 }
+
+########################################################################
+#                                  Tools                               #
+########################################################################
+
+class Tool:
+
+    KNIFE = "/knife"
+    class Knife:
+        BREAD = "/knife/bread"
+        BUTTER = "/knife/butter"
+
+    class Mixer:
+        HAND = "/mixer/hand"
+        STAND = "/mixer/stand"
+        FROTHER = "/mixer/frother"
+        MATCHA = "mixer/matcha"
+
+    POT = "/pot"
+    PAN = "/pan"
+
+    BLENDER = "/blender"
+
+    # class Pot:
+    #     pass
+
+    # class Pan:
+    #     pass
+        
+def tools():
+
+    def tools_helper(cls: type) -> list[str]:
+        constants: list[str] = []
+        for name, value in cls.__dict__.items():
+            
+            if name.isupper() and type(value) is str and value.startswith("/"):
+                constants.append(value)
+            elif type(value) is type:
+                rslt = tools_helper(value)
+                for i in rslt:
+                    constants.append(i)
+        return constants
+    return tools_helper(Tool)

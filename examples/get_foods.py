@@ -9,4 +9,4 @@ from pprint import pprint
 if __name__ == "__main__":
     pprint(kit.foods())
     print()
-    pprint(kit.Food.Protein.GROUND_BEEF)
+    pprint(kit.Food.Meat.GROUND_BEEF)

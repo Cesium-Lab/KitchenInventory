@@ -180,18 +180,18 @@ class TestCountableItem:
                     kit.CountableItem("name", food_type, quantity=1)
                 assert str(e.value) == f"Food type '{food_type}' must be in foods list"
 
-            def test_bad_quantity_type_float(self):
+            def test_bad_quantity_type(self):
                 with pytest.raises(ValueError) as e:
-                    quantity = 5.0
+                    quantity = True
                     kit.CountableItem("name", "/bread", quantity=quantity)
-                assert str(e.value) == f"Quantity must be int and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'"
+                assert str(e.value) == f"Quantity must be int or float, and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'"
 
             def test_bad_quantity(self):
                 """ Cannot be less than 0 (Quantity of 0 stores the details but showing we are "out")"""
                 with pytest.raises(ValueError) as e:
                     quantity = -1
                     kit.CountableItem("name", "/bread", quantity=quantity)
-                assert str(e.value) == f"Quantity must be int and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'"
+                assert str(e.value) == f"Quantity must be int or float, and 0 or greater. Input was '{quantity}' with type '{type(quantity)}'"
 
         class TestValidProperties:
             
@@ -206,6 +206,10 @@ class TestCountableItem:
                 assert item.quantity == quantity
 
                 quantity = 1000000000
+                item = kit.CountableItem("name", "/bread", quantity=quantity)
+                assert item.quantity == quantity
+
+                quantity = 1.5
                 item = kit.CountableItem("name", "/bread", quantity=quantity)
                 assert item.quantity == quantity
         
