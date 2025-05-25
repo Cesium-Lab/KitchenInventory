@@ -152,6 +152,17 @@ def foods():
         return constants
     return foods_helper(Food)
 
-# if __name__ == "__main__":
-#     from pprint import pprint
-#     pprint([i for i in foods() if "/drink/alcohol" in i])
+# For drinks that are not the same density as water
+# 'food_type': ('density', 'units')
+food_density_LUT = {
+    "/drink/water": (2, 'g/mL'),
+    "/dairy/milk": (1.03, 'g/mL')
+}
+
+# to list them out:
+liquids = {
+    "/drink",
+    "/dairy/milk",
+    "/dairy/yogurt",
+    "/sauce"
+}

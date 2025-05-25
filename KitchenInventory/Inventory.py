@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Inventory:
 
     columns = ["Name", "Food Type", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount", "Expiration"]
@@ -24,16 +25,15 @@ class Inventory:
         row["Amount"] = 1
         row["Expiration"] = item.expiration.strftime("%Y-%m-%d") if item.expiration else ""
 
-        def s(qty):
-            return str(qty).strip(" dimensionless")
+        
 
         if isinstance(item, Item):
-            row["Mass (g)"] = [s(item.mass / Quantity(1, "g"))]
-            row["Volume (mL)"] = [s(item.volume / Quantity(1, "mL"))]
-            row["Density (g/mL)"] = [s(item.density / Quantity(1, "g/mL"))]
+            row["Mass (g)"] = [str(item.mass.m)]
+            row["Volume (mL)"] = [str(item.volume.m)]
+            row["Density (g/mL)"] = [str(item.density.m)]
 
         if isinstance(item, CountableItem):
-            row["Amount"] = [s(item.quantity)]
+            row["Amount"] = [Inventory.unitless(item.quantity)]
 
         if item.details:
             for column in Inventory.details_columns:
@@ -54,6 +54,7 @@ class Inventory:
     
     @staticmethod
     def row_to_item(row: pd.Series):
+        print(row)
         expiration = None if row.get("Expiration") == "" else row["Expiration"]
 
         if row["Mass (g)"] and row["Volume (mL)"]:
@@ -108,6 +109,10 @@ class Inventory:
 
 
         return inv
+    
+    @staticmethod
+    def unitless(qty):
+            return str(qty).strip(" dimensionless")
 
         
 
