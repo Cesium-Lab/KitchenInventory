@@ -25,9 +25,9 @@ class TestRecipe:
 
         def test_from_ingredients_good(self):
             ingredients = [
-                (kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")),
-                (kit.Food.Spice.SALT, Quantity(1, "tbsp")),
-                (kit.Food.Meat.CHICKEN, Quantity(0.5, "pound"))
+                [kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")],
+                [kit.Food.Spice.SALT, Quantity(1, "tbsp")],
+                [kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")]
             ]
 
             recipe = kit.Recipe.from_ingredients("name", ingredients)
@@ -51,7 +51,7 @@ class TestRecipe:
             recipe = kit.Recipe("name")
 
             with pytest.raises(ValueError) as e:
-                recipe.add_ingredient("name", 0)
+                recipe.add_ingredient("name", 1)
             assert "food_type not in foods" in str(e.value)
 
         def test_bad_type(self):
@@ -171,10 +171,10 @@ class TestRecipe:
         def test_short_good(self):
 
             ingredients = [
-                (kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")),
-                (kit.Food.Spice.SALT, Quantity(1, "tbsp")),
-                (kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")),
-                (kit.Food.Fruit.STRAWBERRY, Quantity(5, "oz"))
+                [kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")],
+                [kit.Food.Spice.SALT, Quantity(1, "tbsp")],
+                [kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")],
+                [kit.Food.Fruit.STRAWBERRY, Quantity(5, "oz")]
             ]
 
             recipe = kit.Recipe.from_ingredients("name", ingredients)
@@ -186,10 +186,10 @@ class TestRecipe:
         def test_short_err(self):
 
             ingredients = [
-                (kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")),
-                (kit.Food.Spice.SALT, Quantity(1, "tbsp")),
-                (kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")),
-                (kit.Food.Fruit.STRAWBERRY, Quantity(5, "meter"))
+                [kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")],
+                [kit.Food.Spice.SALT, Quantity(1, "tbsp")],
+                [kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")],
+                [kit.Food.Fruit.STRAWBERRY, Quantity(5, "meter")]
             ]
 
             with pytest.raises(ValueError):
@@ -202,10 +202,10 @@ class TestRecipe:
             """ Returns (recipe, ingreeitns)"""
             if ingredients is None:
                 ingredients = [
-                    (kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")),
-                    (kit.Food.Spice.SALT, Quantity(1, "tbsp")),
-                    (kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")),
-                    (kit.Food.Fruit.STRAWBERRY, Quantity(5, "oz"))
+                    [kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")],
+                    [kit.Food.Spice.SALT, Quantity(1, "tbsp")],
+                    [kit.Food.Meat.CHICKEN, Quantity(0.5, "pound")],
+                    [kit.Food.Fruit.STRAWBERRY, Quantity(5, "oz")]
                 ]
 
             if name is None:
@@ -225,10 +225,10 @@ class TestRecipe:
         def test_serving_size_100(self):
 
             ingredients_times_100 = [
-                    (kit.Food.Dairy.MILK, Quantity(100, "cup"), Quantity(1.03, "g/mL")),
-                    (kit.Food.Spice.SALT, Quantity(100, "tbsp")),
-                    (kit.Food.Meat.CHICKEN, Quantity(50, "pound")),
-                    (kit.Food.Fruit.STRAWBERRY, Quantity(500, "oz"))
+                    [kit.Food.Dairy.MILK, Quantity(100, "cup"), Quantity(1.03, "g/mL")],
+                    [kit.Food.Spice.SALT, Quantity(100, "tbsp")],
+                    [kit.Food.Meat.CHICKEN, Quantity(50, "pound")],
+                    [kit.Food.Fruit.STRAWBERRY, Quantity(500, "oz")]
                 ]
             
 
@@ -243,10 +243,10 @@ class TestRecipe:
         def test_serving_size_0_01(self):
 
             ingredients_times_100 = [
-                    (kit.Food.Dairy.MILK, Quantity(1 / 1000, "cup"), Quantity(1.03, "g/mL")),
-                    (kit.Food.Spice.SALT, Quantity(1 / 1000, "tbsp")),
-                    (kit.Food.Meat.CHICKEN, Quantity(0.5 / 1000, "pound")),
-                    (kit.Food.Fruit.STRAWBERRY, Quantity(5 / 1000, "oz"))
+                    [kit.Food.Dairy.MILK, Quantity(1 / 1000, "cup"), Quantity(1.03, "g/mL")],
+                    [kit.Food.Spice.SALT, Quantity(1 / 1000, "tbsp")],
+                    [kit.Food.Meat.CHICKEN, Quantity(0.5 / 1000, "pound")],
+                    [kit.Food.Fruit.STRAWBERRY, Quantity(5 / 1000, "oz")]
                 ]
             
 
@@ -261,10 +261,10 @@ class TestRecipe:
         def test_serving_size_7(self):
 
             ingredients_times_7 = [
-                    (kit.Food.Dairy.MILK, Quantity(1 * 7, "cup"), Quantity(1.03, "g/mL")),
-                    (kit.Food.Spice.SALT, Quantity(1 * 7, "tbsp")),
-                    (kit.Food.Meat.CHICKEN, Quantity(0.5 * 7, "pound")),
-                    (kit.Food.Fruit.STRAWBERRY, Quantity(5 * 7, "oz"))
+                    [kit.Food.Dairy.MILK, Quantity(1 * 7, "cup"), Quantity(1.03, "g/mL")],
+                    [kit.Food.Spice.SALT, Quantity(1 * 7, "tbsp")],
+                    [kit.Food.Meat.CHICKEN, Quantity(0.5 * 7, "pound")],
+                    [kit.Food.Fruit.STRAWBERRY, Quantity(5 * 7, "oz")]
                 ]
             
 
@@ -289,7 +289,7 @@ class TestRecipe:
             recipe = kit.Recipe("name")
 
             with pytest.raises(ValueError):
-                recipe.add_tool("/drink")
+                recipe.add_tool(kit.Food.Drink)
                 
             assert len(recipe.tools) == 0
 
@@ -323,7 +323,7 @@ class TestRecipe:
             recipe = kit.Recipe("name")
 
             for step in steps:
-                recipe.add_steps(step)
+                recipe.add_step(step)
 
             assert recipe.steps == steps
 
@@ -331,7 +331,7 @@ class TestRecipe:
             recipe = kit.Recipe("name")
 
             with pytest.raises(ValueError):
-                recipe.add_steps(1)
+                recipe.add_step(1)
                 
             assert len(recipe.steps) == 0
 

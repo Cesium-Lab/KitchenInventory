@@ -20,14 +20,15 @@ class Recipe:
 
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, recipe_type: str = ""):
         self.name = name
-        self.ingredients: list[tuple[str, Quantity | int, Quantity]] = []
+        self.recipe_type = recipe_type
+        self.ingredients: list[list[str, Quantity | int, Quantity]] = []
         self.tools: list[str] = []
         self.steps: list[str] = []
 
     @staticmethod
-    def from_ingredients(name: str, ingredients: list[tuple[str, Quantity | int, Quantity | None]]):
+    def from_ingredients(name: str, ingredients: list[list[str, Quantity | int, Quantity | None]]):
         recipe = Recipe(name)
         for i in ingredients:
             recipe.add_ingredient(*i)
@@ -55,7 +56,6 @@ class Recipe:
 
     def add_ingredient(self, food_type: str, amount: Quantity | int | float, density: Quantity = None):
         """" Add mass or volume based on the Quantity type"""
-        print(food_type)
         if food_type not in foods():
             raise ValueError(f"'Recipe {self.name}': Adding {amount} of '{food_type}' but food_type not in foods")
 
@@ -75,7 +75,7 @@ class Recipe:
             raise ValueError(f"'amount' must be greater than 0 but was {amount.m}")
 
         if is_mass(amount):
-            self.ingredients.append((food_type, amount))
+            self.ingredients.append([food_type, amount])
         elif is_volume(amount):
             self.__add_volume(food_type, amount, density)
         else:
@@ -87,7 +87,7 @@ class Recipe:
         if food_type in food_density_LUT.keys():
             tup = food_density_LUT[food_type]
             density = Quantity(tup[0], tup[1])
-            self.ingredients.append((food_type, amount, density))
+            self.ingredients.append([food_type, amount, density])
             return
             
         # Defaulting to density
@@ -95,28 +95,28 @@ class Recipe:
 
         # If no density added, do 1 g/mL
         if density is None:
-            self.ingredients.append((food_type, amount))
+            self.ingredients.append([food_type, amount])
             return
     
         #Else tries density and adds
         if not is_density(density): 
             raise ValueError(f"Recipe '{self.name}': 'amount' must be in units of density but was '{density.dimensionality}'")
         
-        self.ingredients.append((food_type, amount, density))
+        self.ingredients.append([food_type, amount, density])
 
     def __add_amount(self, food_type: str, amount: float):
 
         if amount < 1:
             raise ValueError(f"Recipe '{self.name}': amount must be 1 or greater. was '{amount}'")
         
-        self.ingredients.append((food_type, amount))
+        self.ingredients.append([food_type, amount])
 
     def get_ingredients(self, servings: float = 1):
-        new_ingredients: list[tuple[str, Quantity | int, Quantity]] = []
+        new_ingredients: list[list[str, Quantity | int, Quantity]] = []
         for i in self.ingredients:
             food = list(i)
             food[1] *= servings
-            new_ingredients.append(tuple(food))
+            new_ingredients.append(food)
 
         return new_ingredients
     
@@ -131,7 +131,7 @@ class Recipe:
 
         self.tools.append(tool_type)
     
-    def add_steps(self, step: str):
+    def add_step(self, step: str):
         if type(step) is not str:
             raise ValueError(f"Recipe '{self.name}': Step must be a string but was '{type(step)}'")
         self.steps.append(step)

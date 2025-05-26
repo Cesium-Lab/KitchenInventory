@@ -5,7 +5,7 @@ from .Items import Item, CountableItem
 from .Recipe import Recipe
 import logging
 import yaml
-
+from pprint import pprint
 logger = logging.getLogger(__name__)
 
 
@@ -60,7 +60,6 @@ class Inventory:
     
     @staticmethod
     def row_to_item(row: pd.Series):
-        print(row)
         expiration = None if row.get("Expiration") == "" else row["Expiration"]
 
         if row["Mass (g)"] and row["Volume (mL)"]:
@@ -78,10 +77,6 @@ class Inventory:
                 quantity = row["Amount"],
                 expiration = expiration
             )
-
-    # def get_food_rows(self, name: str):
-    #     rows = self.foods[self.foods['Name'] == name]
-    #     return rows
     
     def foods_by_name(self, name: str) -> list[Item | CountableItem]:
         rows = self.foods[self.foods["Name"] == name]
@@ -113,7 +108,6 @@ class Inventory:
 
         logger.info(f"Loaded {len(inv.foods)} foods from '{filename}' into '{inv.name}': {inv}")
 
-
         return inv
     
 class RecipeBook:
@@ -123,34 +117,98 @@ class RecipeBook:
     """
     def __init__(self, name: str):
         self.name = name
-        self.recipes: yaml = None
+        self.recipes: list[dict] = []
         self.recipe_objs: list[Recipe] = []
 
     def add_recipe(self, recipe: Recipe):
-        pass
+        if type(recipe) is not Recipe:
+            raise ValueError(f"RecipeBook '{self.name}': recipe must be Recipe, not {type(recipe)}")
+
+        recipe_dict = recipe.__dict__
+
+        if recipe.ingredients != []:
+            ingredients = []
+            for i in recipe.ingredients:
+                if type(i[1]) is Quantity:
+                    row = [i[0], i[1].m, str(i[1].u)]
+                    if len(i) == 3:
+                        row += [i[2].m, str(i[2].u)]
+                else:
+                    row = [i[0], i[1]]
+                ingredients.append(row)
+            recipe_dict["ingredients"] = ingredients
+
+            
+        self.recipes.append(recipe_dict)
+
+        logger.info(f"Added to {self.name}: {recipe_dict}")
 
     def add_recipes(self, recipes: list[Recipe]):
-        pass
+        for recipe in recipes:
+            self.add_recipe(recipe)
 
     @staticmethod
-    def value_to_recipe(self, value: yaml):
-        pass
+    def value_to_recipe(value: dict) -> Recipe:
+        if value.get("name") is None:
+            raise ImportError("RecipeBook importing Recipe: Row did not contain 'name'")
+        name = value["name"]
+
+        recipe = Recipe(name)
+        
+        if value.get("ingredients") is not None:
+            for i in value["ingredients"]:
+                match len(i):
+                    case 2:
+                        row = i
+                    case 3:
+                        row = [i[0], Quantity(i[1], i[2])]
+                    case 5:
+                        row = [i[0], Quantity(i[1], i[2]), Quantity(i[3], i[4])]
+                    case _:
+                        raise ValueError(f"Ingredient '{i}' invalid length of '{len(i)}'")
+
+                recipe.ingredients.append(row)
+
+        if value.get("tools") is not None:
+            recipe.tools = value["tools"]
+        if value.get("steps") is not None:
+            recipe.steps = value["steps"]
+
+        return recipe
 
     def recipes_by_name(self, name: str):
-        pass
+        names = [recipe for recipe in self.recipes if name in recipe["name"]]
+        return [RecipeBook.value_to_recipe(recipe) for recipe in names]
 
     def recipes_by_type(self, recipe_type: str):
-        pass
+        names = [recipe for recipe in self.recipes if recipe_type in recipe["recipe_type"]]
+        return [RecipeBook.value_to_recipe(recipe) for recipe in names]
 
     def reset(self):
-        pass
+        self.recipes = []
+        self.recipe_objs = []
 
     def save(self, filename: str = None):
-        pass
+        if filename is None:
+            filename = f"./recipe_books/{self.name}.yaml"
+        
+        with open(filename, 'w') as f:
+            yaml.safe_dump(self.recipes, f)
+        logger.info(f"Saved {len(self.recipes)} recipes into '{filename}': {self}")
+
     
     @classmethod
     def load(self, filename: str, name: str = None):
-        pass
+        if name is None:
+            name = filename.split("/")[-1].split(".")[0]
+        book = RecipeBook(name)
+        with open(filename, 'r') as f:
+            book.recipes = yaml.safe_load(f)
+            book.recipe_objs = [RecipeBook.value_to_recipe(row) for row in book.recipes]
+
+        logger.info(f"Loaded {len(book.recipes)} foods from '{filename}' into '{book.name}': {book}")
+
+        return book
 
     
 

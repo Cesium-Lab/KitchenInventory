@@ -7,6 +7,10 @@ def load_yaml(filename: str) -> dict:
     with open(filename) as f:
         file = yaml.safe_load(f)
     return file
+
+def save_yaml(data: dict, filename: str):
+    with open(filename, "w") as f:
+        yaml.safe_dump(data, f)
     
 def setup_logging(config_yaml: dict):
     # current_time = datetime.now() #TODO: make filelogs better
