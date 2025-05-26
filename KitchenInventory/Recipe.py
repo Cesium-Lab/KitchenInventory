@@ -55,7 +55,7 @@ class Recipe:
 
     def add_ingredient(self, food_type: str, amount: Quantity | int | float, density: Quantity = None):
         """" Add mass or volume based on the Quantity type"""
-
+        print(food_type)
         if food_type not in foods():
             raise ValueError(f"'Recipe {self.name}': Adding {amount} of '{food_type}' but food_type not in foods")
 
@@ -135,4 +135,4 @@ class Recipe:
         if type(step) is not str:
             raise ValueError(f"Recipe '{self.name}': Step must be a string but was '{type(step)}'")
         self.steps.append(step)
-    
+

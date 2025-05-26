@@ -143,7 +143,7 @@ class CountableItem:
         diff: timedelta = self.expiration.date() - datetime.today().date()
         return diff.days
     
-class KitchenTools:
+class KitchenTool:
 
     def __init__(self, name: str, tool_type: str):
         self.name = name

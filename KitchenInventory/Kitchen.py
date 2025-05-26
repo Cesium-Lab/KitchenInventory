@@ -2,12 +2,18 @@ from __future__ import annotations
 import pandas as pd
 from pint import Quantity
 from .Items import Item, CountableItem
+from .Recipe import Recipe
 import logging
+import yaml
 
 logger = logging.getLogger(__name__)
 
 
 class Inventory:
+    """ 
+    - Makes a database of items
+    - Can search items with common food
+    """
 
     columns = ["Name", "Food Type", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount", "Expiration"]
     details_columns = ["Brand"]
@@ -33,7 +39,7 @@ class Inventory:
             row["Density (g/mL)"] = [str(item.density.m)]
 
         if isinstance(item, CountableItem):
-            row["Amount"] = [Inventory.unitless(item.quantity)]
+            row["Amount"] = [str(item.quantity)]
 
         if item.details:
             for column in Inventory.details_columns:
@@ -110,10 +116,45 @@ class Inventory:
 
         return inv
     
-    @staticmethod
-    def unitless(qty):
-            return str(qty).strip(" dimensionless")
+class RecipeBook:
+    """ 
+    - Makes and saves a yaml of recipes
+    - Can search recipes
+    """
+    def __init__(self, name: str):
+        self.name = name
+        self.recipes: yaml = None
+        self.recipe_objs: list[Recipe] = []
 
+    def add_recipe(self, recipe: Recipe):
+        pass
+
+    def add_recipes(self, recipes: list[Recipe]):
+        pass
+
+    @staticmethod
+    def value_to_recipe(self, value: yaml):
+        pass
+
+    def recipes_by_name(self, name: str):
+        pass
+
+    def recipes_by_type(self, recipe_type: str):
+        pass
+
+    def reset(self):
+        pass
+
+    def save(self, filename: str = None):
+        pass
+    
+    @classmethod
+    def load(self, filename: str, name: str = None):
+        pass
+
+    
+
+    
         
 
 

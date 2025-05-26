@@ -35,7 +35,7 @@ class TestInventory:
         def test_Item_no_expiration(self):
             """Should add mass, volume, density be default"""
             name = "item"
-            food_type = "/bread"
+            food_type = "bread"
             mass=Quantity(5, "g")
             item = kit.Item(name,
                             food_type=food_type,
@@ -59,7 +59,7 @@ class TestInventory:
         def test_Item_with_expiration(self):
             """Should add mass, volume, density be default"""
             name = "item"
-            food_type = "/bread"
+            food_type = "bread"
             mass = Quantity(5, "g")
             expiration = "2024-03-04"
             item = kit.Item(name,
@@ -76,7 +76,7 @@ class TestInventory:
         def test_CountableItem_no_expiration(self):
             """Should add mass, volume, density be default"""
             name = "item"
-            food_type = "/bread"
+            food_type = "bread"
             quantity = 7
             item = kit.CountableItem(name,
                             food_type=food_type,
@@ -159,7 +159,7 @@ class TestInventory:
     # class TestRowToItem:
 
     #     def test_simple(self):
-    #         item = kit.Item("name", "/bread", mass=Quantity(5, "kg"))
+    #         item = kit.Item("name", "bread", mass=Quantity(5, "kg"))
 
     #         row = pd.DataFrame.from_dict({
     #             "Name": "name",
