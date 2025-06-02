@@ -52,6 +52,7 @@ class Inventory:
 
         # Logging
         stripped_row = {k: v for k, v in row.items() if v}
+        self.food_objs.append(item)
         logger.info(f"Added to {self.name}: {stripped_row}")
 
     def add_items(self, items: list[Item | CountableItem]):
@@ -97,8 +98,8 @@ class Inventory:
             f.write(self.foods.to_csv(index=False))
         logger.info(f"Saved {len(self.foods)} foods into '{filename}': {self}")
 
-    @classmethod
-    def load(self, filename: str, name: str = None) -> Inventory:
+    @staticmethod
+    def load(filename: str, name: str = None) -> Inventory:
         if name is None:
             name = filename.split("/")[-1].split(".")[0]
         inv = Inventory(name)
@@ -109,6 +110,16 @@ class Inventory:
         logger.info(f"Loaded {len(inv.foods)} foods from '{filename}' into '{inv.name}': {inv}")
 
         return inv
+    
+    # def load(self, filename: str, name: str = None):
+    #     if name is None:
+    #         name = filename.split("/")[-1].split(".")[0]
+    #     with open(filename, 'r') as f:
+    #         self.foods = pd.read_csv(f).fillna('')
+    #         self.food_objs = [Inventory.row_to_item(row) for _,row in self.foods.iterrows()]
+
+    #     logger.info(f"Loaded {len(self.foods)} foods from '{filename}' into '{self.name}': {self}")
+        
     
 class RecipeBook:
     """ 

@@ -6,19 +6,7 @@ sys.path.insert(1, os.path.join(sys.path[0], "../..")) # To get KitchenInventory
 import KitchenInventory as kit
 import pytest
 from pint import Quantity
-# from pprint import pprint
 
-# def recipe():
-#     name = "recipe"
-#     ingredients = [
-#         (kit.Food.Dairy.MILK, Quantity(1, "cup"), Quantity(1.03, "g/mL")),
-#         (kit.Food.Spice.SALT, Quantity(1, "tbsp")),
-#         (kit.Food.Meat.CHICKEN, Quantity(0.5, "pound"))
-#     ]
-#     recipe = kit.Recipe(name)
-#     recipe.add_ingredient(kit.Food.Dairy.MILK, Quantity(1, "cup"))
-#     recipe.add_ingredient(kit.Food.Spice.SALT, Quantity(1, "tbsp"))
-#     recipe.add_ingredient(kit.Food.Meat.CHICKEN, Quantity(0.5, "pound"))
 ########################################################################
 #                             RecipeBook                               #
 ########################################################################
