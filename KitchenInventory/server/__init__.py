@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from .inventory_routes import inventory_router
-from ..category_database import foods
+from .recipe_book_routes import recipe_book_router
+from ..core.category_database import foods
 app = FastAPI()
 
-app.include_router(inventory_router, prefix="/inventory", tags=["inventory"])
+app.include_router(inventory_router, prefix="/v1/inventory", tags=["inventory"])
+app.include_router(recipe_book_router, prefix="/v1/recipe-book", tags=["recipe-book"])
 
 
 # TODO: List commands that this app can do

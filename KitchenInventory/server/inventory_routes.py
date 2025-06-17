@@ -4,21 +4,21 @@ import sys
 
 from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRouter
-from  ..category_database import foods
+from  ..core.category_database import foods
 from .Models import ItemBase
-from ..Kitchen import Inventory, Recipe, RecipeBook
-from ..Items import Item, CountableItem
+from ..core.Kitchen import Inventory, Recipe, RecipeBook
+from ..core.Items import Item, CountableItem
 import KitchenInventory.server.errors as err
 from http import HTTPStatus
 
 inventory_router = APIRouter()
 
-inventory: Inventory = None
+inventory: Inventory
 CURR_DIR = os.getcwd()
 
 
 @inventory_router.get("/")
-async def read_main():
+async def root():
     return {"msg": "Inventory! Do things here"}
 
 ########################################################################
@@ -64,7 +64,7 @@ async def create_inventory(name: str):
 #                                  Items                               #
 ########################################################################
 
-@inventory_router.post("/add-item") # tested
+@inventory_router.post("/add-item") # TODO: finish and test
 async def add_item(item_base: ItemBase):
     if inventory is None:
         raise HTTPException(status_code=err.HTTP_400_BAD_REQUEST, 
@@ -74,6 +74,8 @@ async def add_item(item_base: ItemBase):
     except Exception as e:
         raise HTTPException(status_code=err.HTTP_400_BAD_REQUEST, 
                              detail=str(e))
+    
+    # Add to item if already existsh
 
     try:
         inventory.add_item(item)    
@@ -94,6 +96,9 @@ async def list_inventory(objects: bool = True):
     else:
         return {"items": inventory.foods.to_dict()}
 
+# Searching items
+
+# Deleting items
 ########################################################################
 #                                 Saving                               #
 ########################################################################

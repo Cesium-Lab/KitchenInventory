@@ -16,7 +16,7 @@ class Inventory:
     """
 
     columns = ["Name", "Food Type", "Mass (g)", "Volume (mL)", "Density (g/mL)", "Amount", "Expiration"]
-    details_columns = ["Brand"]
+    details_columns = ["Brand", "Description"]
 
     def __init__(self, name: str):
         self.name = name
@@ -30,7 +30,6 @@ class Inventory:
         row["Food Type"] = item.food_type
         row["Amount"] = 1
         row["Expiration"] = item.expiration.strftime("%Y-%m-%d") if item.expiration else ""
-
         
 
         if isinstance(item, Item):
@@ -43,7 +42,9 @@ class Inventory:
 
         if item.details:
             for column in Inventory.details_columns:
+                print(column)
                 if val := item.details.get(column.lower()):
+                    print(val)
                     row[column] = val
 
         row_df = pd.DataFrame.from_dict(row)
@@ -54,11 +55,13 @@ class Inventory:
         stripped_row = {k: v for k, v in row.items() if v}
         self.food_objs.append(item)
         logger.info(f"Added to {self.name}: {stripped_row}")
+        print(self.foods)
 
     def add_items(self, items: list[Item | CountableItem]):
         for item in items:
             self.add_item(item)
-    
+
+    # def use_item(self, item: Item)
     @staticmethod
     def row_to_item(row: pd.Series):
         expiration = None if row.get("Expiration") == "" else row["Expiration"]

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ValidationError, conint
-from ..Items import Item
-from ..Items import CountableItem
+from ..core.Items import Item
+from ..core.Items import CountableItem
 from pint import Quantity
 
 ITEM_OK = "OK"
@@ -16,9 +16,9 @@ class ItemBase(BaseModel):
     density: str | None = None
 
     # Details
-    expiration: str = None
-    brand: str = None
-    description: str = None
+    expiration: str | None = None
+    brand: str | None = None
+    description: str | None = None
         
     def to_Item(self) -> Item:
         self.check_amounts()
@@ -26,14 +26,14 @@ class ItemBase(BaseModel):
 
         details = {}
         if self.brand:
-            details["Brand"] = self.brand
+            details["brand"] = self.brand
         if self.description:
-            details["Description"] = self.description
+            details["description"] = self.description
         
         item = Item(self.name, self.food_type,
                     mass=mass, volume=volume, density=density,
                     expiration=self.expiration,
-                    details=details)
+                    **details)
         
         return item
 

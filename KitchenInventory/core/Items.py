@@ -22,6 +22,8 @@ class Item:
     - volume, density
     - mass, volume
 
+    
+
     Cannot be defined by just density
     
     
@@ -108,11 +110,13 @@ class Item:
         raise PermissionError("Should not be resetting density after initialization")
     
     @property
-    def days_left(self) -> int | None:
+    def days_left(self) -> int | float:
         if self.expiration is None:
             return np.inf
         diff: timedelta = self.expiration.date() - datetime.today().date()
         return diff.days
+    
+
 
 class CountableItem:
     """Tracks countable items using the mass as a \"canonical\" amount"""
